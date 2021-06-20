@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-localstack-example
+
+  Sample SAM Template for sam-localstack-example
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  ExampleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/example_lambda
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          environment: local
+          secretsmanager_name: exampleSecretsManager
+      Layers:
+        - !Ref SecretsManagerGenerator
+  SecretsManagerGenerator:
+    Type: AWS::Serverless::LayerVersion
+    Metadata:
+      BuildMethod: python3.8
+    Properties:
+      LayerName: secrets_manager_generator
+      ContentUri: layers/secrets_manager_generator
+      CompatibleRuntimes:
+      - python3.8
